@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const cryptojs = require('crypto-js');
 
 const user = require('../models/user');
 
@@ -7,9 +8,10 @@ exports.signup = async (req, res, next) => {
   if (!req.body.password || !req.body.email){
     return res.status(400).json({error: 'Missing fields'})
   }
+  const crypt = await cryptojs.HmacSHA256(req.body.email, "CLE_SECRETE").toString();
   const hash = await bcrypt.hash(req.body.password, 10);
   const user = new user({
-    email: req.body.email,
+    email: crypt,
     password: hash
   });
    user.save()
