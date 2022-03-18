@@ -8,7 +8,7 @@ exports.signup = async (req, res, next) => {
   if (!req.body.password || !req.body.email){
     return res.status(400).json({error: 'Missing fields'})
   }
-  const crypt = await cryptojs.HmacSHA256(req.body.email, "CLE_SECRETE").toString();
+  const crypt = await cryptojs.HmacSHA256(req.body.email, 'CLE_SECRETE').toString();
   const hash = await bcrypt.hash(req.body.password, 10);
   const user = new user({
     email: crypt,
