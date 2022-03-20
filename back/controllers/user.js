@@ -9,7 +9,7 @@ exports.signup = async (req, res) => {
   if (!req.body.password || !req.body.email){
     return res.status(400).json({error: 'Missing fields'})
   }
-  const crypt = await cryptojs.AES.encrypt(req.body.email, 'CLE_SECRETE',  {mode: cryptojs.mode.ECB, iv: 'toto'}).toString();
+  const crypt = await cryptojs.AES.encrypt(req.body.email, 'CLE_SECRETE',  {mode: cryptojs.mode.ECB, iv: cryptojs.enc.Utf8.parse('toto')}).toString();
   const hash = await bcrypt.hash(req.body.password, 10);
   const user = new UserModel({
     email: crypt,
