@@ -5,7 +5,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 
-
+const stuffRoutes = require('./routes/stuff');
 const userRoutes = require('./routes/user');
 
 const app = express();
@@ -27,7 +27,9 @@ mongoose.connect(process.env.DATABASE_URI,
 
 
 
-  app.use('/api/auth', userRoutes);
+app.use('/images', express.static(path.join(__dirname, 'images')));
+app.use('/api/stuff', stuffRoutes);
+app.use('/api/auth', userRoutes);
 
 
   module.exports = app;
