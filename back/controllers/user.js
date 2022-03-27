@@ -1,16 +1,20 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const cryptojs = require('crypto-js');
+const Crypto = require('node-crypt');
 
-const user = require('../models/user');
+const crypto = new Crypto({
+  key: process.env.CRYPTO_KEY,
+  hmacKey: process.env.CRYPTO_HMACKEY,
+})
+const User = require('../models/user');
 
 exports.signup = async (req, res, next) => {
   if (!req.body.password || !req.body.email){
     return res.status(400).json({error: 'Missing fields'})
   }
-  const crypt = await cryptojs.AES.encrypt(req.body.email, 'CLE_SECRETE').toString();
+  const crypt = req.body.email;
   const hash = await bcrypt.hash(req.body.password, 10);
-  const user = new user({
+  const user = new User({
     email: crypt,
     password: hash
   });
@@ -23,7 +27,7 @@ exports.signup = async (req, res, next) => {
     if (!req.body.password || !req.body.email){
       return res.status(400).json({error: 'Missing fields'})
     }
-    user.findOne({ email: req.body.email })
+    User.findOne({ email: req.body.email })
       .then(user => {
         if (!user) {
           return res.status(404).json({ error: 'Les identifiants sont incorrects' });
@@ -38,7 +42,7 @@ exports.signup = async (req, res, next) => {
               token: jwt.sign(
                   { userId: user._id},
                   process.env.JWTOKEN,
-                  { expiresIn: '1800'}
+                  { expiresIn: '1H'}
               )
             });
           })

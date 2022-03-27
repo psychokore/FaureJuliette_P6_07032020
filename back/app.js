@@ -3,8 +3,10 @@ const mongoose = require('mongoose');
 const path = require('path');
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
+const cors = require('cors');
 
 dotenv.config();
+
 
 
 const stuffRoutes = require('./routes/stuff');
@@ -27,11 +29,11 @@ app.use((req, res, next) => {
   next();
 });
 
-
+app.use(cors());
 app.use(bodyParser.json());
 
 app.use('/images', express.static(path.join(__dirname, 'images')));
-app.use('/api/stuff', stuffRoutes);
+app.use('/api/sauces', stuffRoutes);
 app.use('/api/auth', userRoutes);
 
 
