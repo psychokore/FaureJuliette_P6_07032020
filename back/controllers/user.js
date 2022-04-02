@@ -28,7 +28,7 @@ exports.signup = async (req, res, next) => {
     if (!req.body.password || !req.body.email){
       return res.status(400).json({error: 'Missing fields'})
     }
-    user.findOne({ email: req.body.email })
+    User.findOne({ email: req.body.email })
       .then(user => {
         if (!user) {
           return res.status(404).json({ error: 'Les identifiants sont incorrects' });
@@ -43,7 +43,7 @@ exports.signup = async (req, res, next) => {
               token: jwt.sign(
                   { userId: user._id},
                   process.env.JWTOKEN,
-                  { expiresIn: '1800'}
+                  { expiresIn: '1h'}
               )
             });
           })
