@@ -6,7 +6,7 @@ const User = require('../models/user');
 
 const crypto = new Crypto({
   key: process.env.CRYPTO_KEY,
-  hmackey: process.env.CRYPTO_HMACKEY,
+  hmacKey: process.env.CRYPTO_HMACKEY,
 })
 
 exports.signup = async (req, res, next) => {
