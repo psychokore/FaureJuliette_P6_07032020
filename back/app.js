@@ -1,12 +1,16 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const path = require('path');
 const dotenv = require('dotenv');
+const cors = require('cors');
 
 dotenv.config();
 
 
 
 const userRoutes = require('./routes/user');
+const saucesRoute = require('./routes/sauces');
 
 const app = express();
 mongoose.connect(process.env.DATABASE_URI,
@@ -25,9 +29,12 @@ mongoose.connect(process.env.DATABASE_URI,
     next();
   });
 
-
+  app.use(cors());
+  app.use(bodyParser.json());
 
   app.use('/api/auth', userRoutes);
+  app.use('/api/sauces', saucesRoute);
+  app.use('/images', express.static(path.join(__dirname, 'images')));
 
 
   module.exports = app;
