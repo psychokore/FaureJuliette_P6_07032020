@@ -5,6 +5,7 @@ const path = require('path');
 const dotenv = require('dotenv');
 const cors = require('cors');
 
+
 dotenv.config();
 
 
@@ -35,6 +36,5 @@ mongoose.connect(process.env.DATABASE_URI,
   app.use('/api/auth', userRoutes);
   app.use('/api/sauces', saucesRoute);
   app.use('/images', express.static(path.join(__dirname, 'images')));
-
 
   module.exports = app;

@@ -4,7 +4,7 @@ const fs = require('fs');
 const sauces = require('../models/sauces');
 
 exports.createSauce = (req, res, next) => {
-    const sauceObject = JSON.parse(req.body.sauce);
+  const sauceObject = JSON.parse(req.body.sauce);
   delete sauceObject._id;
   const sauces = new Sauce({
     ...sauceObject,
@@ -103,7 +103,7 @@ exports.likeSauce =  (req, res, next) => {
                       $pull:{ usersLiked : user, }
                   }
               )
-              .then(() => res.status(201).json({ message: 'objet neutre' }))
+              .then(() => res.status(201).json({ message: 'neutre' }))
               .catch(error => res.status(400).json({ error }))
           }
           else if(sauces.usersDisliked.includes(user)){
@@ -114,7 +114,7 @@ exports.likeSauce =  (req, res, next) => {
                       $pull:{ usersDisliked : user, }
                   }
               )
-              .then(() => res.status(201).json({ message: 'objet neutre' }))
+              .then(() => res.status(201).json({ message: 'neutre' }))
               .catch(error => res.status(400).json({ error })) 
           }
 
@@ -128,7 +128,7 @@ exports.likeSauce =  (req, res, next) => {
                   $push:{usersLiked : user,}
               }
           )
-          .then(() => res.status(201).json({ message: 'objet liké' }))
+          .then(() => res.status(201).json({ message: 'sauce likée' }))
           .catch(error => res.status(400).json({ error }))
           break
           case -1 : console.log("negatif")
@@ -139,7 +139,7 @@ exports.likeSauce =  (req, res, next) => {
                   $push:{usersDisliked : user,}
               }
           )
-          .then(() => res.status(201).json({ message: 'objet disliké' }))
+          .then(() => res.status(201).json({ message: 'sauce dislikée' }))
           .catch(error => res.status(400).json({ error }))
       }
   })
