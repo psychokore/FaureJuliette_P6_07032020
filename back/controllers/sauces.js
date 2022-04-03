@@ -26,8 +26,8 @@ exports.getOneSauce = (req, res, next) => {
     }
   ).catch(
     (error) => {
-      res.status(404).json({
-        error: error
+      res.status(500).json({
+        error: 'Internal server error'
       });
     }
   );
@@ -49,13 +49,15 @@ exports.modifySauce = async (req, res, next) => {
         const filename = sauce.imageUrl.split('/images/')[1];
         fs.unlink(`images/${filename}`, () => {});
     }
-  Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
+    const userId = req.auth.userId
+  Sauce.updateOne({ _id: req.params.id, userId }, { ...sauceObject, _id: req.params.id })
     .then(() => res.status(200).json({ message: 'Sauce modifiée !'}))
-    .catch(error => res.status(400).json({ error }));
+    .catch(error => res.status(500).json({ error: 'Internal server error' }));
 };
 
 exports.deleteSauce = (req, res, next) => {
-  Sauce.findOne({ _id: req.params.id })
+  const userId = req.auth.userId;
+  Sauce.findOne({ _id: req.params.id, userId})
     .then(sauces => {
         if (!sauces) {
             return res.status(404).json({
@@ -66,10 +68,10 @@ exports.deleteSauce = (req, res, next) => {
       fs.unlink(`images/${filename}`, () => {
         Sauce.deleteOne({ _id: req.params.id })
           .then(() => res.status(200).json({ message: 'Sauce supprimée !'}))
-          .catch(error => res.status(400).json({ error }));
+          .catch(error => res.status(500).json({ error: 'Internal server error' }));
       });
     })
-    .catch(error => res.status(500).json({ error }));
+    .catch(error => res.status(500).json({ error: 'Internal server error' }));
 };
 
 exports.getAllSauces = (req, res, next) => {
@@ -79,18 +81,21 @@ exports.getAllSauces = (req, res, next) => {
     }
   ).catch(
     (error) => {
-      res.status(400).json({
-        error: error
+      res.status(500).json({
+        error: 'Internal server error'
       });
     }
   );
 };
 
 exports.likeSauce =  (req, res, next) => {
+  if (!req.body.like){
+    return res.status(400).json({error: 'Missing fields'})
+  }
   Sauce.findOne({ _id: req.params.id })
   .then(sauces => {
 
-      const user = req.body.userId
+      const user = req.auth.userId
       const like = req.body.like        
 
       switch(like) {
@@ -104,7 +109,7 @@ exports.likeSauce =  (req, res, next) => {
                   }
               )
               .then(() => res.status(201).json({ message: 'neutre' }))
-              .catch(error => res.status(400).json({ error }))
+              .catch(error => res.status(500).json({ error: 'Internal server error' }))
           }
           else if(sauces.usersDisliked.includes(user)){
               Sauce.updateOne(
@@ -115,7 +120,7 @@ exports.likeSauce =  (req, res, next) => {
                   }
               )
               .then(() => res.status(201).json({ message: 'neutre' }))
-              .catch(error => res.status(400).json({ error })) 
+              .catch(error => res.status(500).json({ error: 'Internal server error' })) 
           }
 
           break      
@@ -129,7 +134,7 @@ exports.likeSauce =  (req, res, next) => {
               }
           )
           .then(() => res.status(201).json({ message: 'sauce likée' }))
-          .catch(error => res.status(400).json({ error }))
+          .catch(error => res.status(500).json({ error: 'Internal server error' }))
           break
           case -1 : console.log("negatif")
           Sauce.updateOne(
@@ -140,7 +145,7 @@ exports.likeSauce =  (req, res, next) => {
               }
           )
           .then(() => res.status(201).json({ message: 'sauce dislikée' }))
-          .catch(error => res.status(400).json({ error }))
+          .catch(error => res.status(500).json({ error: 'Internal server error' }))
       }
   })
   .catch(error => res.status(500).json({ error }))
