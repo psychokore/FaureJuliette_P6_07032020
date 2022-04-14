@@ -36,7 +36,7 @@ exports.getOneSauce = (req, res, next) => {
 exports.modifySauce = async (req, res, next) => {
   const sauceObject = req.file ?
     {
-      ...JSON.parse(req.body.sauces),
+      ...JSON.parse(req.body.sauce),
       imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
     } : { ...req.body };
     const sauce = await Sauce.findOne({_id: req.params.id});
@@ -89,9 +89,6 @@ exports.getAllSauces = (req, res, next) => {
 };
 
 exports.likeSauce =  (req, res, next) => {
-  if (!req.body.like){
-    return res.status(400).json({error: 'Missing fields'})
-  }
   Sauce.findOne({ _id: req.params.id })
   .then(sauces => {
 
