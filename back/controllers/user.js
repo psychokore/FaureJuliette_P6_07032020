@@ -10,7 +10,7 @@ exports.signup = async (req, res, next) => {
   if (!req.body.password || !req.body.email){
     return res.status(400).json({error: 'Missing fields'})
   }
-  const crypt = cryptojs.SHA256(req.body.mail).toString();
+  const crypt = cryptojs.SHA256(req.body.email).toString();
   const hash = await bcrypt.hash(req.body.password, 10);
   const user = new User({
     email: crypt,
@@ -18,14 +18,17 @@ exports.signup = async (req, res, next) => {
   });
    user.save()
           .then(() => res.status(201).json({ message: 'Utilisateur créé !' }))
-          .catch(error => res.status(500).json({ error: 'Internal server error' }));
+          .catch(error => {
+            console.log(error)
+            res.status(500).json({ error: 'Internal server error' })
+          });
   };
 
   exports.login = (req, res, next) => {
     if (!req.body.password || !req.body.email){
       return res.status(400).json({error: 'Missing fields'})
     }
-    const email = cryptojs.SHA256(req.body.mail).toString();
+    const email = cryptojs.SHA256(req.body.email).toString();
     User.findOne({email})
       .then(user => {
         if (!user) {
